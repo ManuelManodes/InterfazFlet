@@ -1,12 +1,11 @@
 import flet as ft
-from functions.dashboard_page import dashboard_page_content
 from functions.auto_blue_page import auto_blue_page_content
 from assets.themes import get_dark_theme, get_light_theme
 
 def main(page: ft.Page):
-    # Establecer dimensiones iniciales
-    page.window.width = 800
-    page.window.height = 500
+    # Configuración inicial
+    page.window.width = 1100
+    page.window.height = 600
     page.window.resizable = True
 
     page.title = "Interfaz automatización Blue"
@@ -16,7 +15,6 @@ def main(page: ft.Page):
     page.spacing = 0
     page.scroll = ft.ScrollMode.AUTO
 
-    # Definir la altura de la barra superior
     top_bar_height = 50
 
     # Función para cambiar el tema
@@ -32,61 +30,56 @@ def main(page: ft.Page):
         sidebar.bgcolor = page.theme.color_scheme.secondary
         page.update()
 
-    # Barra superior con el botón para cambiar de tema alineado a la derecha
+    # Definimos una función de navegación que carga diferentes contenidos
+    def navigate_to(destination):
+        content_area.controls.clear()
+        if destination == "acceso_rapido":
+            content_area.controls.extend(auto_blue_page_content(navigate_to))
+        elif destination == "dashboard":
+            content_area.controls.append(ft.Text("Página del Dashboard"))
+        elif destination == "displays":
+            content_area.controls.append(ft.Text("Página de Displays"))
+        page.update()
+
+    # Barra superior
     top_bar = ft.Container(
         content=ft.Row(
             [
                 ft.Text("Interfaz automatización Blue", size=24, weight=ft.FontWeight.BOLD),
                 ft.IconButton(
-                    icon=ft.icons.BRIGHTNESS_6,  # Icono del tema
+                    icon=ft.icons.BRIGHTNESS_6,
                     on_click=toggle_theme,
                     tooltip="Cambiar Tema",
                 ),
             ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,  # Alinear contenido en extremos opuestos
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             expand=True,
         ),
         height=top_bar_height,
         bgcolor=page.theme.color_scheme.secondary,
-        padding=ft.padding.symmetric(horizontal=10),  # Espacio horizontal en la barra
+        padding=10,
     )
 
-    # Variable para almacenar el índice anterior
-    previous_selected_index = [0]
-
-    # Función para cambiar de página
-    def change_page(e):
-        selected = e.control.selected_index
-        num_pages = len(navigation_rail.destinations)
-
-        if selected < num_pages:
-            if selected == 0:
-                content_area.controls = dashboard_page_content()
-            elif selected == 1:
-                content_area.controls = auto_blue_page_content()
-            content_area.update()
-
-        # Guardar el índice actual como el anterior para la próxima vez
-        previous_selected_index[0] = selected
-
-    # Sidebar de navegación
+    # Sidebar con solo la opción de "Acceso rápido"
     navigation_rail = ft.NavigationRail(
         selected_index=0,
         destinations=[
-            ft.NavigationRailDestination(icon=ft.icons.GRID_VIEW, label="Dashboard"),
-            ft.NavigationRailDestination(icon=ft.icons.ARROW_FORWARD, label="Acceso a Blue"),
+            ft.NavigationRailDestination(
+                icon=ft.icons.HOME, label="Acceso rápido"
+            ),
         ],
         extended=True,
-        on_change=change_page,
+        on_change=lambda e: navigate_to("acceso_rapido"),
     )
 
-    # Área de contenido que se actualizará
+    # Área de contenido inicial con auto_blue_page_content
     content_area = ft.Column(
-        controls=dashboard_page_content(),
+        controls=auto_blue_page_content(navigate_to),  # Mostrar contenido inicial
         expand=True,
         spacing=10,
     )
 
+    # Sidebar contenedor
     sidebar = ft.Container(
         content=navigation_rail,
         width=200,
@@ -94,25 +87,24 @@ def main(page: ft.Page):
         padding=0,
     )
 
-    # Función para actualizar las alturas del sidebar y el área de contenido
+    # Ajustar alturas dinámicamente
     def update_layout_heights():
         available_height = page.height - top_bar_height
         sidebar.height = max(available_height, 0)
         content_container.height = max(available_height, 0)
         page.update()
 
+    # Evento al redimensionar ventana
     page.on_resized = lambda e: update_layout_heights()
 
+    # Contenedor para contenido principal
     content_container = ft.Container(
-        content=ft.Column(
-            [content_area],
-            spacing=10,
-        ),
+        content=ft.Column([content_area], spacing=10),
         expand=True,
         padding=10,
     )
 
-    # Layout principal con la barra superior y la navegación lateral
+    # Layout principal
     main_content = ft.Column(
         [
             top_bar,
@@ -129,7 +121,9 @@ def main(page: ft.Page):
         spacing=0,
     )
 
+    # Agregar contenido principal
     page.add(main_content)
     update_layout_heights()
 
+# Iniciar la aplicación
 ft.app(target=main)
