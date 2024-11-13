@@ -1,146 +1,58 @@
+# functions/auto_blue_page.py
+
+from functions.custom_card import CustomCard
 import flet as ft
 
 def auto_blue_page_content(navigate_to):
-    return [
-        ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text(
-                        "Bienvenido a la automatización Blue",
-                        size=28,
-                        weight=ft.FontWeight.BOLD,
-                        color=ft.colors.BLUE_GREY_900,
-                    ),
-                    ft.Text(
-                        "Elige una opción para continuar:",
-                        size=16,
-                        color=ft.colors.BLUE_GREY_600,
-                    ),
-                    ft.Row(
-                        [
-                            # Tarjeta 1: Dashboard
-                            ft.Container(
-                                content=ft.Card(
-                                    content=ft.Container(
-                                        content=ft.Column(
-                                            [
-                                                ft.Icon(
-                                                    ft.icons.DASHBOARD,
-                                                    size=30,
-                                                    color=ft.colors.BLUE,
-                                                ),
-                                                ft.Text(
-                                                    "Dashboard",
-                                                    size=18,
-                                                    weight=ft.FontWeight.BOLD,
-                                                    text_align=ft.TextAlign.CENTER,
-                                                ),
-                                                ft.Text(
-                                                    "Ver estadísticas principales.",
-                                                    size=12,
-                                                    text_align=ft.TextAlign.CENTER,  # Centrar el subtítulo
-                                                ),
-                                            ],
-                                            spacing=4,
-                                            alignment=ft.MainAxisAlignment.CENTER,
-                                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                        ),
-                                        padding=15,  # Reducción del padding interno
-                                    ),
-                                    elevation=8,  # Menor elevación para estilo compacto
-                                    width=240,  # Ancho fijo de la tarjeta
-                                    height=120,  # Altura fija de la tarjeta
-                                ),
-                                on_click=lambda e: navigate_to(0),  # Ir al Dashboard
-                                padding=5,
-                                ink=True,
-                            ),
+    """
+    Genera una GridView de CustomCard para la página "Acceso Rápido".
 
-                            # Tarjeta 2: Displays
-                            ft.Container(
-                                content=ft.Card(
-                                    content=ft.Container(
-                                        content=ft.Column(
-                                            [
-                                                ft.Icon(
-                                                    ft.icons.VIDEO_LABEL,
-                                                    size=30,
-                                                    color=ft.colors.GREEN,
-                                                ),
-                                                ft.Text(
-                                                    "Displays",
-                                                    size=18,
-                                                    weight=ft.FontWeight.BOLD,
-                                                    text_align=ft.TextAlign.CENTER,
-                                                ),
-                                                ft.Text(
-                                                    "Gestiona los displays disponibles.",
-                                                    size=12,
-                                                    text_align=ft.TextAlign.CENTER,  # Centrar el subtítulo
-                                                ),
-                                            ],
-                                            spacing=4,
-                                            alignment=ft.MainAxisAlignment.CENTER,
-                                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                        ),
-                                        padding=15,
-                                    ),
-                                    elevation=8,
-                                    width=240,
-                                    height=120,
-                                ),
-                                on_click=lambda e: navigate_to(1),  # Ir a Displays
-                                padding=5,
-                                ink=True,
-                            ),
+    Args:
+        navigate_to (function): Función de navegación para cambiar de página.
 
-                            # Tarjeta 3: Nueva Página
-                            ft.Container(
-                                content=ft.Card(
-                                    content=ft.Container(
-                                        content=ft.Column(
-                                            [
-                                                ft.Icon(
-                                                    ft.icons.NOTE,
-                                                    size=30,
-                                                    color=ft.colors.ORANGE,
-                                                ),
-                                                ft.Text(
-                                                    "Nueva Página",
-                                                    size=18,
-                                                    weight=ft.FontWeight.BOLD,
-                                                    text_align=ft.TextAlign.CENTER,
-                                                ),
-                                                ft.Text(
-                                                    "Accede a la nueva página.",
-                                                    size=12,
-                                                    text_align=ft.TextAlign.CENTER,  # Centrar el subtítulo
-                                                ),
-                                            ],
-                                            spacing=4,
-                                            alignment=ft.MainAxisAlignment.CENTER,
-                                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                        ),
-                                        padding=15,
-                                    ),
-                                    elevation=8,
-                                    width=240,
-                                    height=120,
-                                ),
-                                on_click=lambda e: navigate_to(2),  # Ir a Nueva Página
-                                padding=5,
-                                ink=True,
-                            ),
-                        ],
-                        spacing=10,  # Menor espacio entre tarjetas
-                        alignment=ft.MainAxisAlignment.CENTER,  # Centrar horizontalmente
-                    ),
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,  # Centrar verticalmente
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=20,  # Espacio entre el título y las tarjetas
-            ),
-            expand=True,  # Asegurar que ocupe toda la pantalla
-            padding=20,  # Espacio alrededor del contenido
-        )
+    Returns:
+        ft.GridView: GridView que contiene las instancias de CustomCard.
+    """
+    tarjetas = [
+        CustomCard(
+            image_src="images/image1.png",  # Ruta relativa a assets_dir
+            title="Dashboard",
+            subtitle="Visualiza tus métricas clave",
+            icon=ft.icons.DASHBOARD,
+            on_click=lambda e: navigate_to("dashboard"),
+        ),
+        CustomCard(
+            image_src="images/image2.png",
+            title="Clientes",
+            subtitle="Gestiona tus clientes Blue",
+            icon=ft.icons.PEOPLE,
+            on_click=lambda e: navigate_to("clientes_blue"),
+        ),
+        CustomCard(
+            image_src="images/image3.png",
+            title="Integraciones",
+            subtitle="Conecta con otras aplicaciones",
+            icon=ft.icons.INTEGRATION_INSTRUCTIONS,
+            on_click=lambda e: navigate_to("integraciones"),
+        ),
+        CustomCard(
+            image_src="images/image4.png",
+            title="Reportes",
+            subtitle="Genera reportes detallados",
+            icon=ft.icons.REPORT,
+            on_click=lambda e: navigate_to("reportes"),
+        ),
+        # Agrega más CustomCard según sea necesario
     ]
+
+    # Crear una GridView responsiva para organizar las tarjetas
+    grid = ft.GridView(
+        expand=True,
+        runs_count=3,      # Número de columnas
+        max_extent=250,    # Máximo ancho de cada tarjeta
+        spacing=20,
+        run_spacing=20,
+        controls=tarjetas,
+    )
+
+    return grid
