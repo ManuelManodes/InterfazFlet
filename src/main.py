@@ -1,22 +1,20 @@
-# main.py
-
 import flet as ft
-from functions.auto_blue_page import auto_blue_page_content
 from functions.clientes_blue_page import clientes_blue_page_content
+from functions.blue.client_detail_page import client_detail_page_content
 from assets.themes import get_dark_theme, get_light_theme
-from functions.custom_card import CustomCard  # Asegúrate de importar la clase CustomCard
+from functions.custom_card import CustomCard
 
 def main(page: ft.Page):
     # Configuración inicial
-    page.window_width = 1100
-    page.window_height = 600
+    page.window_width = 800
+    page.window_height = 380
     page.window_resizable = True
-    page.title = "Interfaz Automatización Blue"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.theme = get_light_theme()
+    page.title = "Interfaz Clientes Blue"
+    page.theme_mode = ft.ThemeMode.DARK
+    page.theme = get_dark_theme()
     page.padding = 0
     page.spacing = 0
-    page.scroll = ft.ScrollMode.AUTO
+    #page.scroll = ft.ScrollMode.AUTO
 
     top_bar_height = 60  # Ajustado para una mejor apariencia
 
@@ -51,21 +49,13 @@ def main(page: ft.Page):
     # Función de navegación
     def navigate_to(destination):
         content_area.controls.clear()
-        if destination == "acceso_rapido":
-            content_area.controls.append(auto_blue_page_content(navigate_to))
-        elif destination == "clientes_blue":
+        if destination == "clientes_blue":
             content_area.controls.append(clientes_blue_page_content(navigate_to))
-        elif destination == "integraciones":
-            content_area.controls.append(ft.Text("Página de Integraciones"))
-        elif destination == "indicadores":
-            content_area.controls.append(ft.Text("Página de Indicadores"))
-        elif destination == "cliente_abc":
-            content_area.controls.append(ft.Text("Detalles del Cliente ABC"))
-        elif destination == "dashboard":
-            content_area.controls.append(ft.Text("Página de Dashboard"))
-
-        elif destination == "configuraciones":
-            content_area.controls.append(ft.Text("Página de Configuraciones"))
+        elif destination == "cliente_a":
+            content_area.controls.append(client_detail_page_content(page, "Transbank", navigate_to))
+        elif destination == "cliente_b":
+            content_area.controls.append(client_detail_page_content(page, "Starkoms", navigate_to))
+        # Agrega más elif según sea necesario para otros clientes
         page.update()
 
     # Barra superior
@@ -73,7 +63,7 @@ def main(page: ft.Page):
         content=ft.Row(
             [
                 ft.Text(
-                    "Interfaz Automatización Blue",
+                    "Interfaz Clientes Blue",
                     size=24,
                     weight=ft.FontWeight.BOLD
                 ),
@@ -91,35 +81,21 @@ def main(page: ft.Page):
         padding=10,
     )
 
-    # Sidebar con todas las opciones de navegación
+    # Sidebar con solo la opción "Clientes Blue"
     navigation_rail = ft.NavigationRail(
         selected_index=0,
         destinations=[
             ft.NavigationRailDestination(
-                icon=ft.icons.HOME, label="Acceso Rápido"
-            ),
-            ft.NavigationRailDestination(
                 icon=ft.icons.APARTMENT_ROUNDED, label="Clientes Blue"
-            ),
-            ft.NavigationRailDestination(
-                icon=ft.icons.DISPLAY_SETTINGS_ROUNDED, label="Integraciones"
-            ),
-            ft.NavigationRailDestination(
-                icon=ft.icons.DASHBOARD_OUTLINED, label="Indicadores"
             ),
         ],
         extended=True,
-        on_change=lambda e: navigate_to(
-            "acceso_rapido" if e.control.selected_index == 0 else
-            "clientes_blue" if e.control.selected_index == 1 else
-            "integraciones" if e.control.selected_index == 2 else
-            "indicadores"
-        ),
+        on_change=lambda e: navigate_to("clientes_blue"),
     )
 
-    # Área de contenido inicial con auto_blue_page_content
+    # Área de contenido inicial con clientes_blue_page_content
     content_area = ft.Column(
-        controls=[auto_blue_page_content(navigate_to)],
+        controls=[clientes_blue_page_content(navigate_to)],
         expand=True,
         spacing=10,
     )
@@ -134,13 +110,13 @@ def main(page: ft.Page):
 
     # Ajustar alturas dinámicamente
     def update_layout_heights():
-        available_height = page.height - top_bar_height
+        available_height = page.window_height - top_bar_height
         sidebar.height = max(available_height, 0)
         content_container.height = max(available_height, 0)
         page.update()
 
     # Evento al redimensionar ventana
-    page.on_resized = lambda e: update_layout_heights()
+    page.on_resize = lambda e: update_layout_heights()
 
     # Contenedor para contenido principal
     content_container = ft.Container(
